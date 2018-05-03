@@ -20,7 +20,7 @@ import static com.demo.util.Types.BASIC_SIMPLE_TYPES;
  */
 public class Deserializer {
 
-    private static final int CS_TAG_LENGTH = 9;
+    private static final int TAG_LENGTH = 7;
     private static final String OBJECT_CANNOT_BE_DESERIALIZED_EXCEPTION = "Object cannot be deserialized";
     private static final String KEY_VALUE_SEPARATOR_REGEX = "\\|\\|";
 
@@ -180,13 +180,6 @@ public class Deserializer {
         while (!endTag.equals(temp.toString())) {
             // read character
             reader.read(tmpChar);
-
-            // workaround to fix clashes when string finished with same characters as CLASS_BEGIN tag
-            if (':' == tmpChar[0] && CLASS_BEGIN.startsWith(temp.toString())) {
-                data.append(temp.toString());
-                cleanBuffer(temp);
-            }
-
             temp.append(tmpChar);
 
             if (DEFAULT_SEPARATOR.startsWith(temp.toString()) && DEFAULT_SEPARATOR.equals(temp.toString())) {
@@ -266,7 +259,7 @@ public class Deserializer {
         throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         Collection<Object> collection = new ArrayList<>();
         // read control symbols left for class identification for collection
-        char[] tmpChar = new char[CS_TAG_LENGTH - 1];
+        char[] tmpChar = new char[TAG_LENGTH - 1];
         reader.read(tmpChar);
         temp.append(tmpChar);
         // set char buffer to 1 symbol
@@ -422,13 +415,13 @@ public class Deserializer {
     }
 
     private static String readControlSymbol(StringReader reader) throws IOException {
-        char[] csBuffer = new char[CS_TAG_LENGTH];
+        char[] csBuffer = new char[TAG_LENGTH];
         reader.read(csBuffer);
         return new String(csBuffer);
     }
 
     private static boolean isSerializedStream(StringReader reader) throws IOException {
-        char[] csBuffer = new char[CS_TAG_LENGTH];
+        char[] csBuffer = new char[TAG_LENGTH];
         reader.read(csBuffer);
         return SERIALIZATION_PROTOCOL.equals(new String(csBuffer));
     }
@@ -473,7 +466,7 @@ public class Deserializer {
 
             String tag = temp.toString();
             if (tag.length() > 0) {
-                char[] chars = new char[CS_TAG_LENGTH - tag.length()];
+                char[] chars = new char[TAG_LENGTH - tag.length()];
                 reader.read(chars);
                 tag = temp.append(chars).toString();
             } else {
