@@ -1,31 +1,17 @@
 package com.demo;
 
-import static com.demo.util.Tags.ARRAY_BEGIN;
-import static com.demo.util.Tags.ARRAY_END;
-import static com.demo.util.Tags.ARRAY_VALUE_SEPARATOR;
-import static com.demo.util.Tags.CLASS_BEGIN;
-import static com.demo.util.Tags.CLASS_BODY_BEGIN;
-import static com.demo.util.Tags.CLASS_BODY_END;
-import static com.demo.util.Tags.CLASS_END;
-import static com.demo.util.Tags.CLASS_META_BEGIN;
-import static com.demo.util.Tags.CLASS_META_END;
-import static com.demo.util.Tags.COLLECTION_INITIALIZED;
-import static com.demo.util.Tags.DEFAULT_SEPARATOR;
-import static com.demo.util.Tags.KEY_VALUE_SEPARATOR;
-import static com.demo.util.Tags.OBJECT_NULL;
-import static com.demo.util.Tags.SERIALIZATION_PROTOCOL;
-import static com.demo.util.Types.BASIC_SIMPLE_TYPES;
-import static com.demo.util.Types.JAVA_LANG_OBJECT;
-import static com.demo.util.Types.JAVA_UTIL_DATE;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+
+import static com.demo.util.Tags.*;
+import static com.demo.util.Types.*;
 
 /**
  * Serializer used for serializing objects.
@@ -119,6 +105,8 @@ public class Serializer {
                 }
                 if (value == null) {
                     sb.append(OBJECT_NULL);
+                } else if (JAVA_LANG_STRING.equals(field.getType().getName())) {
+                    sb.append(URLEncoder.encode(value.toString(), "UTF-8"));
                 } else if (BASIC_SIMPLE_TYPES.contains(field.getType().getName())) {
                     sb.append(value);
                 } else if (JAVA_UTIL_DATE.equals(field.getType().getName())) {
@@ -131,7 +119,7 @@ public class Serializer {
                     // add full description of object
                     addClass(sb, value);
                 }
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException | UnsupportedEncodingException e) {
                 throw new IllegalArgumentException(OBJECT_CANOT_BE_SERIALIZED);
             }
         }

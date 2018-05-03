@@ -1,8 +1,10 @@
 package com.demo.initializer.impl;
 
-import java.util.function.Function;
-
 import com.demo.initializer.FieldInitializer;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.function.Function;
 
 /**
  * String Field Initializer.
@@ -10,6 +12,12 @@ import com.demo.initializer.FieldInitializer;
 public class StringFieldInitializer implements FieldInitializer {
 	@Override
 	public Function<String, ?> getConverter() {
-		return String::valueOf;
+		return s -> {
+			try {
+				return URLDecoder.decode(s, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				throw new IllegalArgumentException("Object cannot be decoded");
+			}
+		};
 	}
 }

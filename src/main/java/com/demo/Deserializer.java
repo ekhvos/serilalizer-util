@@ -1,33 +1,19 @@
 package com.demo;
 
-import static com.demo.util.Tags.ARRAY_VALUE_SEPARATOR;
-import static com.demo.util.Tags.BEGIN_END_PAIRS;
-import static com.demo.util.Tags.CLASS_BEGIN;
-import static com.demo.util.Tags.CLASS_BODY_BEGIN;
-import static com.demo.util.Tags.CLASS_END;
-import static com.demo.util.Tags.CLASS_META_BEGIN;
-import static com.demo.util.Tags.DEFAULT_SEPARATOR;
-import static com.demo.util.Tags.KEY_VALUE_SEPARATOR;
-import static com.demo.util.Tags.OBJECT_NULL;
-import static com.demo.util.Tags.SERIALIZATION_PROTOCOL;
-import static com.demo.util.Types.BASIC_SIMPLE_TYPES;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import com.demo.info.ClassMetaData;
+import com.demo.initializer.FieldInitializationFactory;
+import com.demo.initializer.FieldInitializer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.demo.info.ClassMetaData;
-import com.demo.initializer.FieldInitializationFactory;
-import com.demo.initializer.FieldInitializer;
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.Field;
+import java.util.*;
+
+import static com.demo.util.Tags.*;
+import static com.demo.util.Types.BASIC_SIMPLE_TYPES;
 
 /**
  * Deserializer used for deserializing objects from stream.
@@ -194,6 +180,13 @@ public class Deserializer {
         while (!endTag.equals(temp.toString())) {
             // read character
             reader.read(tmpChar);
+
+            // workaround to fix clashes when string finished with same characters as CLASS_BEGIN tag
+            if (':' == tmpChar[0] && CLASS_BEGIN.startsWith(temp.toString())) {
+                data.append(temp.toString());
+                cleanBuffer(temp);
+            }
+
             temp.append(tmpChar);
 
             if (DEFAULT_SEPARATOR.startsWith(temp.toString()) && DEFAULT_SEPARATOR.equals(temp.toString())) {
@@ -205,7 +198,7 @@ public class Deserializer {
                     cleanBuffer(temp);
                     cleanBuffer(data);
                 }
-            } else if (CLASS_BEGIN.startsWith(temp.toString()) && CLASS_BEGIN.equals(temp.toString())) {
+            } else if (CLASS_BEGIN.equals(temp.toString())) {
                 Object obj = readClassData(reader, CLASS_BEGIN, null, null);
                 objects[i] = obj;
 
