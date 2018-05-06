@@ -1,15 +1,15 @@
 package com.demo.benchmark.serializer;
 
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class JavaSerialization extends Serialization {
-
-    public JavaSerialization() {
-        super("Java serialization");
-    }
+@State(Scope.Benchmark)
+public class JavaSerialization implements Serialization {
 
     @Override
     public byte[] serialize(Object object) throws Exception {

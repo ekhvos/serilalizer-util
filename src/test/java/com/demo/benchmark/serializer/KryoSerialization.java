@@ -1,12 +1,5 @@
 package com.demo.benchmark.serializer;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-
 import com.demo.benchmark.data.Friend;
 import com.demo.benchmark.data.Post;
 import com.demo.benchmark.data.UserComplex;
@@ -16,12 +9,18 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.pool.KryoFactory;
 import com.esotericsoftware.kryo.pool.KryoPool;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 
-public class KryoSerialization extends Serialization {
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Date;
 
-    public KryoSerialization() {
-        super("Kryo");
-    }
+@State(Scope.Benchmark)
+public class KryoSerialization implements Serialization {
 
     private static final KryoFactory KRYO_FACTORY = new KryoFactory() {
         @Override
@@ -40,10 +39,6 @@ public class KryoSerialization extends Serialization {
     private static final KryoPool KRYO_POOL = new KryoPool.Builder(KRYO_FACTORY)
         .softReferences()
         .build();
-
-    public KryoSerialization(String name) {
-        super(name);
-    }
 
     public Input getInput(InputStream is) {
         return new Input(is);

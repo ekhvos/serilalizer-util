@@ -1,18 +1,13 @@
 package com.demo.benchmark.serializer;
 
-public abstract class Serialization {
+public interface Serialization {
+    /**
+     * Serialize object.
+     */
+    byte[] serialize(Object object) throws Exception;
 
-    private final String name;
-
-    public Serialization(String name) {
-        this.name = name;
-    }
-
-    public abstract byte[] serialize(Object object) throws Exception;
-    
-    public abstract Object deserialize(byte[] bytes, Class<?> type) throws Exception;
-
-    public String getName() {
-        return name;
-    }
+    /**
+     * Deserialize object.
+     */
+    Object deserialize(byte[] bytes, Class<?> type) throws Exception;
 }

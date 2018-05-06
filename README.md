@@ -7,6 +7,8 @@ Also can work with complex object containing all previously mentioned objects/pr
 
 ################################################################################################
 
-to run project with benchmarks use:
+to run project use:
 
 mvn clean install
+
+to run benchmarks run class BenchmarkRunner

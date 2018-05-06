@@ -1,11 +1,10 @@
 package com.demo;
 
-import java.util.ArrayList;
-
+import com.demo.data.SerialTest;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.demo.data.SerialTest;
+import java.util.ArrayList;
 
 public class SerializationUtilTest {
     private SerializationUtil serializationUtil = new SerializationUtil();
